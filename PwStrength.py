@@ -19,7 +19,7 @@
 # -*- coding: utf-8; -*-
 
 # Calculate password strength.  Algorithm is based on the
-# Wolfram|Alpha’s, without dictionary and “extra critira”.
+# Wolfram|Alpha's, without dictionary and "extra critira".
 #
 # Author: Darksair
 # Contributor: dylanfmarquis
@@ -83,6 +83,50 @@ def findDictWord(pw):
         Iter = 0
         Position += 1
 
+def extraCriteria(pw):
+    mask = 0x00
+
+    if len(pw) >= 8:
+	mask = mask | 0x001
+
+    if re.compile('[a-z]+').findall(pw):
+        mask = mask | 0x002
+
+
+    if re.compile('[A-Z]+').findall(pw):
+        mask = mask | 0x004
+
+    if re.compile('[0-9]+').findall(pw):
+        if re.compile('[0-9]{2,}').findall( pw):
+	    mask = mask | 0x012
+	else:
+            mask = mask | 0x08
+
+    if re.compile('[`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?]').findall(pw):
+        mask = mask | 0x026
+
+
+    #Score of 0 if length is under 8 chars
+    if (mask%2) == 0:
+	return 0
+
+    elif mask == 15:
+        return 6
+
+    elif mask == 23:
+        return 8
+
+    elif mask == 39:
+        return 6
+
+    elif mask == 55:
+        return 10
+
+    elif mask == 47:
+	return 8
+
+    else:
+	return 0
 
 
 def pwStrength(pw):
@@ -194,5 +238,7 @@ def pwStrength(pw):
 
     if findDictWord(pw) is True:
         Score -= 20
+
+    Score += extraCriteria(pw)
 
     return Score
