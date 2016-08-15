@@ -242,3 +242,21 @@ def pwStrength(pw):
     Score += extraCriteria(pw)
 
     return Score
+
+def prettyScore(pw):
+    Score = pwStrength(pw)
+   
+    if Score < 0:
+        return "Very Weak"
+
+    elif 0 < Score <= 64:
+        return "Weak"
+
+    elif 64 < Score <= 74:
+	return "Fair"
+
+    elif 74 < Score <= 89:
+        return "Strong"
+
+    elif Score >= 90:
+	return "Very Strong"
