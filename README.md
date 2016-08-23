@@ -10,3 +10,4 @@ Enchant - Enchant spellchecking system
 Changes
 ----
 Added English dictionary word detection
+Added Wolfram "Extra Criteria"
