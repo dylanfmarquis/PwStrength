@@ -130,8 +130,6 @@ def extraCriteria(pw):
 
 
 def pwStrength(pw):
-    """Wolfram|Alpha algorithm without dictionary and "extra critira".
-    """
     Score = 0
     Length = len(pw)
     Score += Length * 4
