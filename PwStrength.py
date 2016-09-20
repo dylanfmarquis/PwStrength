@@ -75,13 +75,15 @@ def findDictWord(pw):
     for Letter in AlphaStr:
         while Iter <= len(AlphaStr):
                 try:
-                    if (EngDict.check(AlphaStr[Position:(Iter-len(AlphaStr))])) and (len(AlphaStr[Position:(Iter-len(AlphaStr))]) >= 3):
-		        return True				
+                    if (EngDict.check(AlphaStr[Position:(Iter-len(AlphaStr))])) and\
+                       (len(AlphaStr[Position:(Iter-len(AlphaStr))]) >= 3):
+		        return True
                 except:
                     pass
                 Iter += 1
         Iter = 0
         Position += 1
+    return False
 
 def extraCriteria(pw):
     mask = 0x00
@@ -134,7 +136,7 @@ def pwStrength(pw):
     Length = len(pw)
     Score += Length * 4
     # print("Length score: {}".format(Score))
-    
+
     NUpper = 0
     NLower = 0
     NNum = 0
@@ -149,7 +151,7 @@ def pwStrength(pw):
     for i in range(Length):
         Ch = pw[i]
         Code = ord(Ch)
-        
+
         if Code >= 48 and Code <= 57:
             NNum += 1
             LocNum.append(i)
@@ -213,12 +215,12 @@ def pwStrength(pw):
         for MultiUppers in re.findall(''.join(["[A-Z]{2,", str(Length), '}']), pw):
             Score -= (len(MultiUppers) - 1) * 2
             # print("Consequtive uppers:", -(len(MultiUppers) - 1) * 2)
-        
+
         # Consequtive numbers
         for MultiNums in re.findall(''.join(["[0-9]{2,", str(Length), '}']), pw):
             Score -= (len(MultiNums) - 1) * 2
             # print("Consequtive numbers:", -(len(MultiNums) - 1) * 2)
-        
+
         # Sequential letters
         LocLetters = (LocUpper + LocLower)
         LocLetters.sort()
@@ -226,7 +228,7 @@ def pwStrength(pw):
             if len(Seq) > 2:
                 Score -= (len(Seq) - 2) * 2
                 # print("Sequential letters:", -(len(Seq) - 2) * 2)
-        
+
         # Sequential numbers
         for Seq in findSeqChar(LocNum, pw.lower()):
             if len(Seq) > 2:
@@ -243,7 +245,7 @@ def pwStrength(pw):
 
 def prettyScore(pw):
     Score = pwStrength(pw)
-   
+
     if Score < 0:
         return "Very Weak"
 
@@ -258,3 +260,31 @@ def prettyScore(pw):
 
     elif Score >= 90:
 	return "Very Strong"
+
+def passwordEntropy(pw):
+    """
+    Based on NIST SP 800-63 - Claude Shannon Method
+    This does not follow Wolfram's entropy calculation
+    """
+    i = 0
+    entropy = 0.0
+    for letter in pw:
+        i+=1
+        if i == 1:
+            entropy += 4.0
+        if 1 < i < 9:
+            entropy += 2.0
+        if 8 < i < 21:
+            entropy += 1.5
+        if i > 20:
+            entropy += 1
+
+    if re.compile("[A-Z0-9]").findall(pw) or\
+       re.compile('[A-Z`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?]').findall(pw):
+        entropy += 6
+
+    if findDictWord(pw) is False and len(pw) < 20:
+        print 'dict'
+        entropy += 6
+
+    return entropy
