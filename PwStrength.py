@@ -319,6 +319,5 @@ def prettyPasswordEnumeration(num,rate):
 
 def passwordNumber(pw):
     entropy = passwordEntropy(pw)
-    print entropy
     numPasswd = math.pow(2, entropy)
     return numPasswd
