@@ -27,6 +27,7 @@
 # Usage: Strength = pwStrength(password).
 
 import re
+import math
 import enchant
 
 def findSeqChar(CharLocs, src):
@@ -284,7 +285,40 @@ def passwordEntropy(pw):
         entropy += 6
 
     if findDictWord(pw) is False and len(pw) < 20:
-        print 'dict'
         entropy += 6
 
     return entropy
+
+def prettyPasswordEnumeration(num,rate):
+    """
+    Accepts number of passwords and the rate (i.e. 100,000 password guesses per second
+    """
+    sec = num/rate
+    if sec < 61:
+        return "{0} seconds".format(sec)
+    else:
+        if sec/60 < 61:
+            return "{0} minutes".format(round(sec/60,2))
+        else:
+            if (sec/60) < 25:
+                return "{0} hours".format((sec/60)/60)
+            else:
+                if ((sec/60)/60)/24 < 366:
+                    return "{0} days".format(((sec/60)/60)/24)
+                else:
+                    rem = (((sec/60)/60)/24)/365
+                    if rem < 1000001:
+                        return "{0} years".format(round(rem,2))
+                    else:
+                        rem = rem/1000000
+                        if rem < 1001:
+                            return "{0} million years".format(round(rem,2))
+                        else:
+                            return "{0} billion years".format(round(rem/1000,2))
+
+
+def passwordNumber(pw):
+    entropy = passwordEntropy(pw)
+    print entropy
+    numPasswd = math.pow(2, entropy)
+    return numPasswd
