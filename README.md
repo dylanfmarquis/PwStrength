@@ -13,6 +13,7 @@ Setup
 export PYTHONPATH=$PYTHONPATH:/home/foo/PwStrength
 ```
 ##Examples
+###Usage
 ```python
 >>> from PwStrength import *
 >>>
