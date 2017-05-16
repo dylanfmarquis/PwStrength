@@ -19,7 +19,7 @@ export PYTHONPATH=$PYTHONPATH:/home/foo/PwStrength
 >>>
 >>> passwd = "Secret123"
 >>>
->>> PwStrength(passwd)
+>>> pwStrength(passwd)
 >>> # 49
 >>>
 >>> prettyScore(passwd)
