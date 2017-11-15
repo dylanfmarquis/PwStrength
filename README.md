@@ -37,6 +37,7 @@ pip install .
 prettyPasswordEnumeration takes 2 arguements, the number of passwords (2 raised to the power of the
 password's entropy and the number of guesses a given machine could guess in 1 second. In the case
 of the example above, it's 100,000 guesses per second.
+
 ###Password entropy derivation
 The password entropy calculation is based on NIST SP 800-63
 http://csrc.nist.gov/publications/nistpubs/800-63/SP800-63V1_0_2.pdf
