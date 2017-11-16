@@ -67,7 +67,7 @@ def findDictWord(pw):
         AlphaStr += SubStr
         if len(SubStr) >= 3:
             if EngDict.check(SubStr):
-	        return True
+                return True
 
     Position = 0
     Iter = 0
@@ -76,7 +76,7 @@ def findDictWord(pw):
                 try:
                     if (EngDict.check(AlphaStr[Position:(Iter-len(AlphaStr))])) and\
                        (len(AlphaStr[Position:(Iter-len(AlphaStr))]) >= 3):
-		        return True
+                        return True
                 except:
                     pass
                 Iter += 1
@@ -88,7 +88,7 @@ def extraCriteria(pw):
     mask = 0x00
 
     if len(pw) >= 8:
-	mask = mask | 0x001
+        mask = mask | 0x001
 
     if re.compile('[a-z]+').findall(pw):
         mask = mask | 0x002
@@ -99,8 +99,8 @@ def extraCriteria(pw):
 
     if re.compile('[0-9]+').findall(pw):
         if re.compile('[0-9]{2,}').findall( pw):
-	    mask = mask | 0x012
-	else:
+            mask = mask | 0x012
+        else:
             mask = mask | 0x08
 
     if re.compile('[`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?]').findall(pw):
@@ -109,7 +109,7 @@ def extraCriteria(pw):
 
     #Score of 0 if length is under 8 chars
     if (mask%2) == 0:
-	return 0
+        return 0
 
     elif mask == 15:
         return 6
@@ -124,17 +124,16 @@ def extraCriteria(pw):
         return 10
 
     elif mask == 47:
-	return 8
+        return 8
 
     else:
-	return 0
+        return 0
 
 
 def pwStrength(pw):
     Score = 0
     Length = len(pw)
     Score += Length * 4
-    # print("Length score: {}".format(Score))
 
     NUpper = 0
     NLower = 0
@@ -252,13 +251,13 @@ def prettyScore(pw):
         return "Weak"
 
     elif 64 < Score <= 74:
-	return "Fair"
+        return "Fair"
 
     elif 74 < Score <= 89:
         return "Strong"
 
     elif Score >= 90:
-	return "Very Strong"
+        return "Very Strong"
 
 def passwordEntropy(pw):
     """
