@@ -281,7 +281,7 @@ def passwordEntropy(pw):
        re.compile('[A-Z`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?]').findall(pw):
         entropy += 6
 
-    if findDictWord(pw) is False and len(pw) < 20:
+    if findDictWord(pw) is False and len(pw) < 21:
         entropy += 6
 
     return entropy

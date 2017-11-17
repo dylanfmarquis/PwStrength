@@ -37,8 +37,8 @@ password's entropy and the number of guesses a given machine could guess in 1 se
 of the example above, it's 100,000 guesses per second.
 
 ### Password entropy derivation
-The password entropy calculation is based on NIST SP 800-63
-http://csrc.nist.gov/publications/nistpubs/800-63/SP800-63V1_0_2.pdf
+The password entropy calculation is based on NIST SP 800-63-2
+https://csrc.nist.gov/publications/detail/sp/800-63/2/archive/2013-08-29
 
 Changes
 ----
