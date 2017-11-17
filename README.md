@@ -9,9 +9,7 @@ Enchant - Enchant spellchecking system
 
 ## Setup
 ```bash
-git clone https://github.com/dylanfmarquis/PwStrength.git
-cd PwStrength
-pip install .
+pip install PwStrength
 ```
 ## Usage
 ```python
