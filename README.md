@@ -42,6 +42,7 @@ of the example above, it's 100,000 guesses per second.
 
 ### Password entropy derivation
 The password entropy calculation is based on NIST SP 800-63-2
+
 https://csrc.nist.gov/publications/detail/sp/800-63/2/archive/2013-08-29
 
 ### Password exposition check
@@ -51,6 +52,7 @@ characters of a SHA-1 hash, haveibeenpwned returns all of the suffixes of expose
 database. If PwStrength matches the supplied password to one found in the API's return, it will return
 True. Further information regarding the k-Anonymity model employed by haveibeenpwned can be found in
 the article below.
+
 https://www.troyhunt.com/ive-just-launched-pwned-passwords-version-2/
 
 ### prettyPasswordExposition
