@@ -27,6 +27,8 @@ __author__      = "Dylan F. Marquis"
 import re
 import math
 import enchant
+import hashlib
+import requests
 
 def findSeqChar(CharLocs, src):
     """Find all sequential chars in string `src'.  Only chars in
@@ -318,3 +320,19 @@ def passwordNumber(pw):
     entropy = passwordEntropy(pw)
     numPasswd = math.pow(2, entropy)
     return numPasswd
+
+def passwordExposition(pw, api='https://api.pwnedpasswords.com/range/'):
+    h = hashlib.sha1(pw).hexdigest()
+    prefix = h[0:5].upper()
+    suffix = h[5:].upper()
+    ret = requests.get('{0}/{1}'.format(api,prefix))
+    for line in ret.text.split('\n'):
+        exposed_suffix = line.split(':')[0]
+        if exposed_suffix == suffix:
+            return True
+    return False
+
+def prettyPasswordExposition(response):
+    if bool(response):
+        return "This password has been exposed in a data breach"
+    return "This password was not found in any known data breaches"
