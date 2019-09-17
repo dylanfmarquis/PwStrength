@@ -58,6 +58,39 @@ def findSeqChar(CharLocs, src):
 
     return AllSeqChars
 
+def de_munging(pw, returnList, count = 0):
+
+    mung_dict = {'@': ['a'], '4': ['a'], '8': ['b'], '(': ['c'], '6': ['d'], '3': ['e'], 'ph': ['f'],
+                 '9': ['q','g'], '#': ['h'], '1': ['l','i'], '!': ['l','i'], '|': ['l','i'], '_|': ['j'],
+                 '<': ['k'], 'nn': ['m'], '/V': ['n'], '/v':['n'], '0': ['o'], '|o': ['p'], '|>': ['p'], '|2': ['r'],
+                 '$': ['s'], '5': ['s'],'+': ['t'], '\/': ['u','v'], '2u': ['w'], 'uu': ['w'],
+                 '%': ['x'], '?': ['y'], '2': ['z']}
+
+    pw_lower = pw.lower()
+
+    if len(pw_lower) == count:
+        return pw_lower
+
+    while count < len(pw_lower):
+    #for i in range(len(pw_lower)):
+        if (mung_dict[pw_lower[count]] is None) and (count != 0):
+
+            if mung_dict[pw_lower[count-1:count]] is not None:
+
+                for ch in mung_dict[pw_lower[count-1:count]]: #do here, will be very similar to other tagged for loop
+                    pw_lower = pw_lower[:count-1] + pw_lower[(count):]
+                    pw_lower[count] = ch
+                    returnList.append(de_munging(pw_lower, returnList, count =count + 1))
+        else:
+
+            for ch in mung_dict[pw_lower[count]]:        #tag
+                pw_lower[count] = ch
+                returnList.append(de_munging(pw_lower, returnList, count =count + 1))
+
+
+
+
+
 def findDictWord(pw):
 
     CharSubstring = []
@@ -102,7 +135,7 @@ def extraCriteria(pw):
     if re.compile('[0-9]+').findall(pw):
         if re.compile('[0-9]{2,}').findall( pw):
             mask = mask | 0x012
-        else:
+    else:
             mask = mask | 0x08
 
     if re.compile('[`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?]').findall(pw):
@@ -136,6 +169,7 @@ def pwStrength(pw):
     Score = 0
     Length = len(pw)
     Score += Length * 4
+    # print("Length score: {}".format(Score))
 
     NUpper = 0
     NLower = 0
@@ -283,7 +317,7 @@ def passwordEntropy(pw):
        re.compile('[A-Z`\-=~!@#$%^&*()_+\[\]{};\'\\:"|<,./<>?]').findall(pw):
         entropy += 6
 
-    if findDictWord(pw) is False and len(pw) < 21:
+    if findDictWord(pw) is False and len(pw) < 20:
         entropy += 6
 
     return entropy
