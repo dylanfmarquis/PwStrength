@@ -15,9 +15,9 @@ pip install PwStrength
 ```python
 >>> from PwStrength import *
 >>>
->>> pws = PwStrength(passwd)
->>>
 >>> passwd = "Secret123"
+>>>
+>>> pws = PwStrength(passwd)
 >>>
 >>> pws.stats()
 Password Score: 49
