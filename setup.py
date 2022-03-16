@@ -8,6 +8,6 @@ setup(name = 'PwStrength',
       url = 'https://github.com/dylanfmarquis/PwStrength',
       download_url = 'https://github.com/dylanfmarquis/PwStrength/archive/0.1.0.tar.gz',
       packages = ['PwStrength'],
-      install_requires = ['pyenchant', 'requests'],
+      install_requires = ['pyenchant', 'requests', 'bitarray'],
       keywords = ['password', 'strength', 'testing'],
       )

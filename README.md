@@ -11,39 +11,51 @@ Enchant - Enchant spellchecking system
 ```bash
 pip install PwStrength
 ```
-## Usage
+## Example Usage
 ```python
 >>> from PwStrength import *
 >>>
+>>> pws = PwStrength(passwd)
+>>>
 >>> passwd = "Secret123"
 >>>
->>> pwStrength(passwd)
->>> # 49
+>>> pws.stats()
+Password Score: 49
+Estimated Password Strength: Weak
+Password Entropy: 53.587766793481876
+Number of Paswords: 1.3537086546263544e+16
+Time to Enumeration (default 10 GH/s): 15.667924243360583 days
+Password Exposed in a Breach: True
 >>>
->>> prettyScore(passwd)
->>> # Weak
+>>> print(pws.score)
+49
 >>>
->>> passwordEntropy(passwd)
->>> # 25.6
+>>> print(pws.pretty_score)
+Weak
 >>>
->>> prettyPasswordEnumeration(passwordNumber(passwd), 100000)
->>> # 7.91 minutes
+>>> print(pws.entropy)
+53.58
+>>>
+>>> pws.prettyPasswordEnumeration(10000000000)
+15.667924243360583 days
 >>>
 >>> passwordExposition(passwd)
->>> True
+True
 >>>
 >>> prettyPasswordExposition(passwd)
->>> This password has been exposed in a data breach
+This password has been exposed in a data breach
 ```
 ### prettyPasswordEnumeration
-prettyPasswordEnumeration takes 2 arguements, the number of passwords (2 raised to the power of the
-password's entropy and the number of guesses a given machine could guess in 1 second. In the case
-of the example above, it's 100,000 guesses per second.
+prettyPasswordEnumeration takes hashing rate as an argument. Hashing rate is the number of 
+guesses a given machine could guess in 1 second. In the example above, the rate is 10 GH/s.
 
 ### Password entropy derivation
-The password entropy calculation is based on NIST SP 800-63-2
+Entropy is calculated using the following formula:
 
-https://csrc.nist.gov/publications/detail/sp/800-63/2/archive/2013-08-29
+L = Number of characters in the password
+R = Size of the character pool used
+
+E = L * log(R) / log(2)
 
 ### Password exposition check
 The passwordExposition leverages the API from haveibeenpwned.com. The API uses a k-Anonymity model, which
@@ -59,16 +71,10 @@ https://www.troyhunt.com/ive-just-launched-pwned-passwords-version-2/
 prettyPasswordExposition takes the result of passwordExposition, returning a string indicating the
 exposure of the password.
 
-Changes
-----
-Added English dictionary word detection
+## Disable Automatic Analysis
+Analysis functions are run automatically at initialization. This functionality can be disabled, if 
+running specific analysis against large datasets.
 
-Added Wolfram "Extra Criteria"
-
-Added password entropy
-
-Added number of passwords
-
-Added password enumeration time
-
-Added password exposition check
+```python
+pws = PwStrength(passwd, auto=False)
+```
