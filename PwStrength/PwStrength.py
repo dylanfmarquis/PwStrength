@@ -30,7 +30,6 @@ import hashlib
 import math
 import re
 import requests
-import tabulate
 
 def set_bit(bitarray, position):
     return bitarray | (1 << position)
