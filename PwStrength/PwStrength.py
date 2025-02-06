@@ -25,26 +25,41 @@ __author__      = "Darksair"
 __author__      = "Dylan F. Marquis"
 
 from logging import NullHandler
-from bitarray import bitarray
-from bitarray.util import int2ba, ba2int
 import enchant
 import hashlib
 import math
 import re
 import requests
+import tabulate
+
+def set_bit(bitarray, position):
+    return bitarray | (1 << position)
+
+def is_set(bitarray, position):
+    return (bitarray & (1 << position)) != 0
+
+def count_set_bits(bitarray, masks):
+    return sum((bitarray & mask) == mask for mask in masks)
 
 class PwStrength(object):
 
     def __init__(self, password, auto = True):
 
-        self.MASK_LENGTH_8 = int2ba(1, length=8)
-        self.MASK_LOWERCASE = int2ba(2, length=8)
-        self.MASK_UPPERCASE = int2ba(4, length=8)
-        self.MASK_SINGLE_NUMBERAL = int2ba(8, length=8)
-        self.MASK_MULTIPLE_NUMBERAL = int2ba(16, length=8)
-        self.MASK_SPECIAL_CHAR = int2ba(32, length=8)
-        self.MASK_SPEC_CHAR_TOP_ROW = int2ba(64, length=8)
-        self.MASK_SPEC_CHAR_ADDITIONAL = int2ba(128, length=8)
+        base_array = 0b00000000
+
+        self.MASK_LENGTH_8 = set_bit(base_array, 1)
+        self.MASK_LOWERCASE = set_bit(base_array, 2)
+        self.MASK_UPPERCASE = set_bit(base_array, 4)
+        self.MASK_NUMBERAL = set_bit(base_array, 8)
+        self.MASK_MULTIPLE_NUMBERAL = set_bit(base_array, 16)
+        self.MASK_SPECIAL_CHAR = set_bit(base_array, 32)
+        self.MASK_SPEC_CHAR_TOP_ROW = set_bit(base_array, 64)
+        self.MASK_SPEC_CHAR_ADDITIONAL = set_bit(base_array, 128)
+
+        self.COMPLEXITY_MASKS = [self.MASK_LOWERCASE,
+                                 self.MASK_UPPERCASE,
+                                 self.MASK_NUMBERAL,
+                                 self.MASK_SPECIAL_CHAR]
 
         self.password = password
         self.api = 'https://api.pwnedpasswords.com/range/'
@@ -150,7 +165,7 @@ class PwStrength(object):
         return False
 
     def scoreExtraCriteria(self):
-        criteria = bitarray('00000000')
+        criteria = 0b00000000
 
         if len(self.password) >= 8:
             criteria = criteria | self.MASK_LENGTH_8
@@ -164,8 +179,9 @@ class PwStrength(object):
         if re.compile('[0-9]+').findall(self.password):
             if re.compile('[0-9]{2,}').findall(self.password):
                 criteria = criteria | self.MASK_MULTIPLE_NUMBERAL
+                criteria = criteria | self.MASK_NUMBERAL
             else:
-                criteria = criteria | self.MASK_SINGLE_NUMBERAL
+                criteria = criteria | self.MASK_NUMBERAL
 
         #\w can not be used as it represents [a-zA-Z0-9_]
         if re.compile('[^a-zA-Z0-9]').findall(self.password):
@@ -185,21 +201,24 @@ class PwStrength(object):
     def extraCriteria(self):
         
         #Score of 0 if length is under 8 chars
-        if (ba2int(self.criteria & self.MASK_LENGTH_8)) == 0:
+        if (self.criteria & self.MASK_LENGTH_8) == 0:
             return 0
 
-        if self.characterPools.count() == 3:
+        if count_set_bits(self.criteria, self.COMPLEXITY_MASKS) == 3:
             return 8
         
-        if self.characterPools.count() == 4:
+        if count_set_bits(self.criteria, self.COMPLEXITY_MASKS) == 4:
             return 10
 
         return 0
 
     def scorePassword(self):
+
         Score = 0
         Length = len(self.password)
         Score += Length * 4
+
+        # print(f"Length score: {Score}")
 
         NUpper = 0
         NLower = 0
@@ -250,6 +269,8 @@ class PwStrength(object):
 
         # Middle number or symbol
         Score += len([i for i in LocNum if i != 0 and i != Length - 1]) * 2
+        # print(f"Middle number score: {len([i for i in LocNum if i != 0 and i != Length - 1]) * 2}")
+
         # print("Middle number score:", len([i for i in LocNum if i != 0 and i != Length - 1]) * 2)
         Score += len([i for i in LocSymbol if i != 0 and i != Length - 1]) * 2
         # print("Middle symbol score:", len([i for i in LocSymbol if i != 0 and i != Length - 1]) * 2)
@@ -301,6 +322,7 @@ class PwStrength(object):
 
 
         if self.findDictWord() is True:
+            # print("Dictionary word: -20")
             Score -= 20
 
         Score += self.extraCriteria()
@@ -330,21 +352,21 @@ class PwStrength(object):
         L = len(self.password)
         poolSize = 0
 
-        if (ba2int(self.characterPools & self.MASK_LOWERCASE) == ba2int(self.MASK_LOWERCASE)):
+        if (self.characterPools & self.MASK_LOWERCASE) == self.MASK_LOWERCASE:
             poolSize += 26
         
-        if (ba2int(self.characterPools & self.MASK_UPPERCASE) == ba2int(self.MASK_UPPERCASE)):
+        if (self.characterPools & self.MASK_UPPERCASE) == self.MASK_UPPERCASE:
             poolSize += 26
 
-        if ((ba2int(self.characterPools & self.MASK_SINGLE_NUMBERAL) == ba2int(self.MASK_SINGLE_NUMBERAL)) or
-            (ba2int(self.characterPools & self.MASK_MULTIPLE_NUMBERAL) == ba2int(self.MASK_MULTIPLE_NUMBERAL))):
+        if (self.characterPools & self.MASK_NUMBERAL) == self.MASK_NUMBERAL or \
+           (self.characterPools & self.MASK_MULTIPLE_NUMBERAL) == self.MASK_MULTIPLE_NUMBERAL:
             poolSize += 10
 
-        if (ba2int(self.characterPools & self.MASK_SPEC_CHAR_TOP_ROW) == ba2int(self.MASK_SPEC_CHAR_TOP_ROW)):
+        if (self.characterPools & self.MASK_SPEC_CHAR_TOP_ROW) == self.MASK_SPEC_CHAR_TOP_ROW:
             #Top row of characters on the keyboard
             poolSize += 16
 
-        if (ba2int(self.characterPools & self.MASK_SPEC_CHAR_ADDITIONAL) == ba2int(self.MASK_SPEC_CHAR_ADDITIONAL)):
+        if (self.characterPools & self.MASK_SPEC_CHAR_ADDITIONAL) == self.MASK_SPEC_CHAR_ADDITIONAL:
             #Rest of special characters visable on keyboard
             poolSize += 16
 
@@ -387,12 +409,12 @@ class PwStrength(object):
 
         h = hashlib.sha1(self.password.encode('utf-8')).hexdigest()
 
-        prefix = h[0:5].upper()
+        prefix = h[0:5]
         suffix = h[5:].upper()
 
-        ret = requests.get('{0}/{1}'.format(self.api,prefix))
+        r = requests.get('{0}{1}'.format(self.api, prefix))
 
-        for line in ret.text.split('\n'):
+        for line in r.text.split('\n'):
 
             exposed_suffix = line.split(':')[0]
 

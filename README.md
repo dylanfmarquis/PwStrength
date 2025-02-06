@@ -78,3 +78,8 @@ running specific analysis against large datasets.
 ```python
 pws = PwStrength(passwd, auto=False)
 ```
+
+## Unit Tests
+```bash
+python -m unittest tests/test.py
+```
