@@ -432,12 +432,8 @@ class PwStrength(object):
 
     def prettyPasswordExposure(self):
 
-        # Auto has been disabled
-        if not self.score:
-            self.score = self.scorePassword()
-
         response = self.passwordExposure()
         if bool(response):
             return "This password has been exposed in a data breach"
-            
+
         return "This password was not found in any known data breaches"
