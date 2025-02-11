@@ -39,17 +39,17 @@ Weak
 >>> pws.prettyPasswordEnumeration(10000000000)
 15.667924243360583 days
 >>>
->>> passwordExposition(passwd)
+>>> passwordExposure(passwd)
 True
 >>>
->>> prettyPasswordExposition(passwd)
+>>> prettyPasswordExposure(passwd)
 This password has been exposed in a data breach
 ```
 ### prettyPasswordEnumeration
 prettyPasswordEnumeration takes hashing rate as an argument. Hashing rate is the number of 
 guesses a given machine could guess in 1 second. In the example above, the rate is 10 GH/s.
 
-### Password entropy derivation
+### Password Entropy Derivation
 Entropy is calculated using the following formula:
 
 L = Number of characters in the password
@@ -57,8 +57,8 @@ R = Size of the character pool used
 
 E = L * log(R) / log(2)
 
-### Password exposition check
-The passwordExposition leverages the API from haveibeenpwned.com. The API uses a k-Anonymity model, which
+### Password Exposure Check
+The passwordExposure leverages the API from haveibeenpwned.com. The API uses a k-Anonymity model, which
 removes the need to send the entire password hash to haveibeenpwned.com. PwStrength sends the first five
 characters of a SHA-1 hash, haveibeenpwned returns all of the suffixes of exposed passwords in it's 
 database. If PwStrength matches the supplied password to one found in the API's return, it will return
@@ -67,8 +67,8 @@ the article below.
 
 https://www.troyhunt.com/ive-just-launched-pwned-passwords-version-2/
 
-### prettyPasswordExposition
-prettyPasswordExposition takes the result of passwordExposition, returning a string indicating the
+### prettyPasswordExposure
+prettyPasswordExposure takes the result of passwordExposure, returning a string indicating the
 exposure of the password.
 
 ## Disable Automatic Analysis

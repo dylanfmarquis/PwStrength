@@ -68,8 +68,8 @@ class PwStrength(object):
         self.score = None
         self.pretty_score = None
         self.entropy = None
-        self.exposition = None
-        self.pretty_exposition = None
+        self.exposure = None
+        self.pretty_exposure = None
         self.number_of_passwords = None
         self.pretty_enumeration = None
 
@@ -77,8 +77,8 @@ class PwStrength(object):
             self.score = self.scorePassword()
             self.pretty_score = self.prettyScore()
             self.entropy = self.passwordEntropy()
-            self.exposition = self.passwordExposition()
-            self.pretty_exposition = self.prettyPasswordExposition()
+            self.exposure = self.passwordExposure()
+            self.pretty_exposure = self.prettyPasswordExposure()
             self.number_of_passwords = self.passwordNumber()
             self.pretty_enumeration = self.prettyPasswordEnumeration(10000000000)
 
@@ -99,8 +99,8 @@ class PwStrength(object):
         if self.pretty_enumeration:
             print('Time to Enumeration (default 10 GH/s): {}'.format(self.pretty_enumeration))
 
-        if self.pretty_exposition:
-            print('Password Exposed in a Breach: {}'.format(str(self.exposition)))
+        if self.pretty_exposure:
+            print('Password Exposed in a Breach: {}'.format(str(self.exposure)))
 
     def findSeqChar(self, CharLocs, src):
         """Find all sequential chars in string `src'.  Only chars in
@@ -268,8 +268,7 @@ class PwStrength(object):
 
         # Middle number or symbol
         Score += len([i for i in LocNum if i != 0 and i != Length - 1]) * 2
-        # print(f"Middle number score: {len([i for i in LocNum if i != 0 and i != Length - 1]) * 2}")
-
+        
         # print("Middle number score:", len([i for i in LocNum if i != 0 and i != Length - 1]) * 2)
         Score += len([i for i in LocSymbol if i != 0 and i != Length - 1]) * 2
         # print("Middle symbol score:", len([i for i in LocSymbol if i != 0 and i != Length - 1]) * 2)
@@ -330,6 +329,10 @@ class PwStrength(object):
 
     def prettyScore(self):
 
+        # Auto has been disabled
+        if not self.score:
+            self.score = self.scorePassword()
+
         if self.score < 0:
             return "Very Weak"
 
@@ -375,6 +378,11 @@ class PwStrength(object):
         """
         Accepts rate of password hashing (i.e. 100,000 password guesses per second
         """
+
+        # Auto has been disabled
+        if not self.number_of_passwords: 
+            self.number_of_passwords = self.passwordNumber()
+
         sec = self.number_of_passwords/rate
         if sec < 61:
             return "{0} seconds".format(sec)
@@ -404,7 +412,7 @@ class PwStrength(object):
 
         return math.pow(2, entropy)
 
-    def passwordExposition(self):
+    def passwordExposure(self):
 
         h = hashlib.sha1(self.password.encode('utf-8')).hexdigest()
 
@@ -422,8 +430,14 @@ class PwStrength(object):
 
         return False
 
-    def prettyPasswordExposition(self):
-        response = self.passwordExposition()
+    def prettyPasswordExposure(self):
+
+        # Auto has been disabled
+        if not self.score:
+            self.score = self.scorePassword()
+
+        response = self.passwordExposure()
         if bool(response):
             return "This password has been exposed in a data breach"
+            
         return "This password was not found in any known data breaches"

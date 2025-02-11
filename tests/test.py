@@ -1,5 +1,7 @@
 from importlib.machinery import SourceFileLoader
 import os
+import random
+import secrets
 import sys
 import unittest
 
@@ -18,7 +20,7 @@ PwStrength = SourceFileLoader("PwStrength", f'{get_project_directory()}/PwStreng
 
 class Test_PasswordCalculation(unittest.TestCase):
 
-    def test_scoring_and_entropy(self):
+    def test_scoring_entropy_exposure(self):
 
         # num
         p = PwStrength.PwStrength('0')
@@ -65,6 +67,14 @@ class Test_PasswordCalculation(unittest.TestCase):
         p = PwStrength.PwStrength('Qwertyui187!@%')
         self.assertEqual(p.score, 110)
         self.assertEqual(p.entropy, 87.99563106407147)
+
+        # Exposed
+        p = PwStrength.PwStrength('password')
+        self.assertEqual(p.exposure, True)
+
+        # Not Exposed
+        p = PwStrength.PwStrength(secrets.token_urlsafe(20))
+        self.assertEqual(p.exposure, False)
 
 if __name__ == "__main__":
     unittest.main()
