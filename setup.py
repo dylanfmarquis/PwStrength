@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name = 'PwStrength',
-      version = '0.2.0',
+      version = '0.2.5',
       author = 'Dylan F. Marquis',
       author_email = 'dylanfmarquis@dylanfmarquis.com',
       description = 'Wolfram Style Password Strength Test',
